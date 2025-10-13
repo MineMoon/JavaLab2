@@ -7,6 +7,11 @@ public class Gun {
     }
 
     public void setAmmo(int ammo) {
+        if(ammo < 0){
+            this.ammo = 5;
+        } else if (ammo > 12) {
+            this.ammo = 12;
+        }
         this.ammo = ammo;
     }
 
@@ -16,12 +21,7 @@ public class Gun {
     }
 
     public Gun(int ammo){
-        if(ammo < 0){
-            this.ammo = 5;
-        } else if (ammo > 12) {
-            this.ammo = 12;
-        }
-        this.ammo = ammo;
+        setAmmo(ammo);
     }
 
     // copy
