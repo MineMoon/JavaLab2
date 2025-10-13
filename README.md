@@ -76,6 +76,8 @@ public String toString() {
 ```
 Используется статистический метод класса String - format
 
+![Image alt](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Time1.png)
+
 **Форматирование времени:**
 - `totalSeconds % 86400 / 3600` - вычисляет часы (остаток от деления на секунды в сутках)
 - `totalSeconds % 3600 / 60` - вычисляет минуты
@@ -114,6 +116,8 @@ public String toString() {
 - Для чисел 11-14 - "этажами"  
 - Для остальных случаев - "этажами"
 
+![House](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/House1.png)
+
 ## Классы Department и Employee
 
 ### Архитектурное решение - использование пакета:
@@ -133,6 +137,8 @@ public String toString() {
 - `Employee(String name)` - сотрудник с именем без отдела
 - `Employee(String name, Department department)` - сотрудник с именем и отделом
 - `Employee(Employee copyEmployee)` - конструктор глубокого копирования
+
+![Employee](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Employee1.png)
 
 Во всех конструкторах классов делается проверка на исключения. Либо напрямую в конструкторе, либо через методы set[имя какого-либо поля], которые также обрабатывают исключения.
 
@@ -178,6 +184,8 @@ public String toString() {
 }
 ```
 
+
+
 ### Класс Department
 
 #### Назначение:
@@ -189,6 +197,18 @@ public String toString() {
 - `Department(String name, Employee boss)` - отдел с названием и начальником
 - `Department(String name, Employee boss, ArrayList<Employee> employees)` - полная инициализация
 - `Department(Department department)` - конструктор глубокого копирования
+
+Стандартное создание:
+
+![Departament](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/DepartamentToString1.png)
+
+Без названия и начальника:
+
+![Departament](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/DepartamentToString2.png)
+
+Без названия, начальника и сотрудника:
+
+![Departament](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/DepartamentToString3.png)
 
 #### Ключевые методы:
 
@@ -216,6 +236,8 @@ public void removeEmployee(Employee employee) {
 }
 ```
 Добавление и удаление сотрудника из отдела происходит именно с помощью этих методов. Нельзя использовать setDepartament у объекта класса Employee.
+
+![Departament](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/DepartamentAddRem.png)
 
 #### Методы с особыми областями видимости:
 
@@ -282,6 +304,8 @@ public void reload(){ // перезарядка (по заданию не пре
 }
 ```
 
+![Gun](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Gun1.png)
+
 ## Вспомогательные классы
 
 ### Класс Check
@@ -295,3 +319,10 @@ public void reload(){ // перезарядка (по заданию не пре
 - `inputDiaposonInt()` - ввод числа в диапазоне
 - `inputChoiceInt()` - ввод выбора из меню
 - `inputString()` - ввод строки
+
+
+![Gun](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Input1.png)
+
+![Gun](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Input2.png)
+
+![Gun](https://github.com/MineMoon/JavaLab2/blob/main/PNGFR/Input3.png)
