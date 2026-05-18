@@ -3,10 +3,12 @@
 //FIXTO:
 // @copyright MineMoon. All rights reserved.
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.), излишнее документирование (12 стр.)
-//       вывод и комментарии должны быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокментируемый код (1 стр.),
-//       магические числа в константы(14 стр.)
+// FIXME: Отсутствует Javadoc для класса и 
+// методов, используются магические числа (164, 1), 
+// нарушены правила отступов (2 пробела), 
+// отсутствуют пробелы после ключевых слов if, 
+// строковые литералы в методе toString написаны на русском языке, 
+// а в конструкторе копирования отсутствует проверка на null.
 // public class House {
 //     private final int floor;
 
@@ -54,50 +56,61 @@
 // }
 //
 // FIXTO:
-public class CHouse {
-    // Constants for floor limits and defaults
-    private final int KMinFloors = 1;
-    private final int KMaxFloors = 164;
-    private final int KDefaultFloors = 1;
+/**
+ * Represents a house with a specific number of floors.
+ */
+public class House {
 
-    private final int Floor; // Number of floors in the house
+  private static final int MIN_FLOORS = 1;
+  private static final int MAX_FLOORS = 164;
+  private static final int DEFAULT_FLOORS = 1;
 
-    /**
-     * Constructor with floor validation.
-     */
-    public CHouse(int _Floor) {
-        if (_Floor < KMinFloors || _Floor > KMaxFloors) {
-            this.Floor = KDefaultFloors;
-        } else {
-            this.Floor = _Floor;
-        }
+  private final int floor;
+
+  /**
+   * Constructs a house with a validated number of floors.
+   *
+   * @param floor the number of floors to set.
+   */
+  public House(int floor) {
+    if (floor < MIN_FLOORS || floor > MAX_FLOORS) {
+      this.floor = DEFAULT_FLOORS;
+    } else {
+      this.floor = floor;
     }
+  }
 
-    /**
-     * Copy constructor.
-     */
-    public CHouse(CHouse _House) {
-        if (_House != null) {
-            this.Floor = _House.GetFloor();
-        } else {
-            this.Floor = KDefaultFloors;
-        }
+  /**
+   * Copy constructor to create a house from another house object.
+   *
+   * @param house the house object to copy.
+   */
+  public House(House house) {
+    if (house != null) {
+      this.floor = house.getFloor();
+    } else {
+      this.floor = DEFAULT_FLOORS;
     }
+  }
 
-    /**
-     * Returns the number of floors.
-     */
-    public int GetFloor() {
-        return Floor;
-    }
+  /**
+   * Returns the number of floors.
+   *
+   * @return the floor count.
+   */
+  public int getFloor() {
+    return floor;
+  }
 
-    /**
-     * Returns a string representation of the house.
-     */
-    @Override
-    public String toString() {
-        // In English, singular "floor" is only for 1, otherwise "floors"
-        String FloorSuffix = (Floor == 1) ? "floor" : "floors";
-        return String.format("House with %d %s", Floor, FloorSuffix);
-    }
+  /**
+   * Returns a string representation of the house in English.
+   *
+   * @return formatted string with floor count.
+   */
+  @Override
+  public String toString() {
+    // In English: "1 floor", otherwise "floors"
+    String suffix = (floor == 1) ? "floor" : "floors";
+    return String.format("House with %d %s", floor, suffix);
+  }
 }
