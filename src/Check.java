@@ -46,36 +46,13 @@ public class Check {
   }
 
   /**
-   * Checks if a number is prime.
+   * Checks if a number is positive.
    *
    * @param number the integer to check.
-   * @return true if the number is prime, false otherwise.
    */
-  public boolean isPrime(int number) {
-    if (number < 2) {
-      return false;
-    }
-    for (int i = 2; i <= Math.sqrt(number); i++) {
-      if (number % i == 0) {
-        return false;
-      }
-    }
-    return true;
+  public boolean isPositive (int num) {
+    return num >= 0;
   }
-
-  /**
-   * Calculates the sum of digits of a given number.
-   *
-   * @param number the integer whose digits will be summed.
-   * @return the absolute sum of all digits.
-   */
-  public int sumOfDigits(int number) {
-    int sum = 0;
-    int tempNumber = Math.abs(number);
-    while (tempNumber > 0) {
-      sum += tempNumber % 10;
-      tempNumber /= 10;
-    }
-    return sum;
-  }
+   
+   
 }
