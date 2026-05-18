@@ -3,11 +3,21 @@
 //FIXTO:
 // @copyright MineMoon. All rights reserved.
 
-import Departament.*;
+// FIXME: импорту должны быть без звездочек(wildcards)
+// import Departament.*;
+// import java.util.Scanner;
+//
+// FIXTO:
+import Departament.Department;
+import Departament.Employee;
 import java.util.Scanner;
 
-// FIXME: Префикс C для класса (4-6 стр.), PascalCase для всех имен (3 стр.), самодокументируемый код (1 стр.)
-// префикс _ для параметров (6 стр.), вывод и комментарии должны быть на английском (3 стр.), PascalCase (3 стр.)
+
+// FIXME: Используются импорты через "звездочку" (wildcards), 
+// нарушены правила отступов (2 пробела), 
+// отсутствуют обязательные фигурные скобки для однострочного if,
+// отсутствуют пробелы перед открывающими скобками конструкций do и if, 
+// отсутствует Javadoc для класса и метода main.
 // public class Main {
 // 	public static void main(String[] args) {
 // 		Scanner sc = new Scanner(System.in);
@@ -110,85 +120,81 @@ import java.util.Scanner;
 // }
 //
 // FIXTO:
-public class CMain {
-    public static void Main(String[] _Args) {
-        // Constants for task selection
-        final int KTaskTime = 1;
-        final int KTaskHouse = 2;
-        final int KTaskDepartment = 3;
-        final int KTaskGun = 4;
+/**
+ * Entry point of the application. Handles task selection and user interaction.
+ */
+public class Main {
 
-        // Constants for menu navigation
-        final int KMenuRepeat = 1;
-        final int KMenuToTaskSelection = 2;
-        final int KMenuExit = 3;
+  /**
+   * Main execution loop.
+   *
+   * @param args command line arguments.
+   */
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    UserInput input = new UserInput();
 
-        Scanner InputScanner = new Scanner(System.in); // Standard scanner for input
-        CUserInput InputHandler = new CUserInput(); // Helper for validated user input
+    int navigationChoice = 2;
+    int selectedTask = 0;
+    int argument = 0;
+    boolean bExit = false;
 
-        int NavigationChoice = 2; // Stores user choice for repeating or exiting
-        int SelectedTask = 0; // Stores the current active task ID
-        int TaskArgument = 0; // Universal argument for different tasks
-        boolean bIsExit = false; // Flag to terminate the main loop
+    do {
+      if (navigationChoice == 2) {
+        selectedTask = input.inputChoiceInt(1, 4,
+            "topic:\n1. Time\n2. House\n3. Departments and Employees\n4. Gun");
+      }
 
-        do {
-            if (NavigationChoice == KMenuToTaskSelection) {
-                SelectedTask = InputHandler.InputChoiceInt(1, 4, 
-                    "a topic:\n1. Time\n2. House\n3. Departments and Employees\n4. Gun");
-            }
+      switch (selectedTask) {
+        case 1:
+          argument = input.inputPositiveInt(0);
+          Time time = new Time(argument);
+          System.out.println("Time: " + time);
+          System.out.println();
+          break;
 
-            switch (SelectedTask) {
-                case KTaskTime:
-                    TaskArgument = InputHandler.InputPositiveInt(0);
-                    CTime TimeObject = new CTime(TaskArgument);
-                    System.out.println("Time: " + TimeObject.toString());
-                    break;
+        case 2:
+          argument = input.inputRangeInt(1, 163, "number of floors");
+          House house = new House(argument);
+          System.out.println(house);
+          break;
 
-                case KTaskHouse:
-                    final int KMaxHouseFloors = 163;
-                    TaskArgument = InputHandler.InputRangeInt(1, KMaxHouseFloors, "number of floors");
-                    CHouse HouseObject = new CHouse(TaskArgument);
-                    System.out.println(HouseObject.toString());
-                    break;
+        case 3:
+          Department department = new Department("IT");
+          Employee emp1 = new Employee("Petrov", department);
+          Employee emp2 = new Employee("Kozlov", department);
+          Employee emp3 = new Employee("Sidorov", department);
 
-                case KTaskDepartment:
-                    CDepartment ItDepartment = new CDepartment("IT");
-                    CEmployee FirstEmployee = new CEmployee("Petrov", ItDepartment);
-                    CEmployee BossEmployee = new CEmployee("Kozlov", ItDepartment);
-                    CEmployee ThirdEmployee = new CEmployee("Sidorov", ItDepartment);
-                    
-                    ItDepartment.SetBoss(BossEmployee);
-                    System.out.println(ItDepartment.toString());
-                    break;
+          department.setBoss(emp2);
+          System.out.println(department);
+          break;
 
-                case KTaskGun:
-                    final int KInitialAmmo = 3;
-                    CGun Pistol = new CGun(KInitialAmmo);
-                    Pistol.Shoot();
-                    Pistol.Shoot();
-                    Pistol.Shoot();
-                    Pistol.Shoot();
-                    Pistol.Reload();
-                    break;
+        case 4:
+          Gun pistol = new Gun(3);
+          pistol.shoot();
+          pistol.shoot();
+          pistol.shoot();
+          pistol.shoot();
+          pistol.shoot();
+          pistol.reload();
+          break;
 
-                default:
-                    System.out.println("Unknown task selected.");
-                    break;
-            }
+        default:
+          System.out.println("Invalid task selected.");
+          break;
+      }
 
-            System.out.println();
-            System.out.println("Repeat?\n1. Yes\n2. Back to task selection\n3. Exit");
-            
-            NavigationChoice = InputHandler.InputRangeInt(KMenuRepeat, KMenuExit, "option");
-            
-            if (NavigationChoice == KMenuExit) {
-                bIsExit = true;
-            }
-            
-            System.out.println();
+      System.out.println();
+      System.out.println("Options:\n1. Repeat\n2. Back to task selection\n3. Exit");
+      navigationChoice = input.inputRangeInt(1, 3, "option");
 
-        } while (!bIsExit);
-        
-        InputScanner.close();
-    }
+      if (navigationChoice == 3) {
+        bExit = true;
+      }
+      System.out.println();
+
+    } while (!bExit);
+
+    sc.close();
+  }
 }
