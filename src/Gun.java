@@ -3,9 +3,13 @@
 //FIXTO:
 // @copyright MineMoon. All rights reserved.
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.)
-//       вывод должен быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокментируемый код (1 стр.)
+// FIXME: Отсутствует Javadoc для класса и 
+// методов, используются магические числа вместо 
+// именованных констант, нарушены правила 
+// отступов (2 пробела), отсутствуют пробелы 
+// после ключевых слов if, строковые литералы 
+// написаны на русском языке, а также нарушен 
+// порядок следования аннотаций.
 // public class Gun {
 //     private int ammo;
 
@@ -59,79 +63,90 @@
 // }
 //
 //FIXTO:
-public class CGun {
-    // Constants for ammo limits
-    private final int KDefaultAmmo = 5;
-    private final int KMaxAmmo = 12;
-    private final int KEmptyAmmo = 0;
+/**
+ * Represents a gun with ammunition management.
+ */
+public class Gun {
 
-    private int Ammo; // Current amount of ammunition in the gun
+  private static final int MAX_AMMO = 12;
+  private static final int DEFAULT_AMMO = 5;
+  private static final int MIN_AMMO = 0;
 
-    /**
-     * Default constructor.
-     */
-    public CGun() {
-        Ammo = KDefaultAmmo;
+  private int ammo;
+
+  /**
+   * Constructs a gun with default ammunition.
+   */
+  public Gun() {
+    this.ammo = DEFAULT_AMMO;
+  }
+
+  /**
+   * Constructs a gun with specific ammunition amount.
+   *
+   * @param ammo the initial amount of ammo.
+   */
+  public Gun(int ammo) {
+    setAmmo(ammo);
+  }
+
+  /**
+   * Copy constructor to create a gun from another gun object.
+   *
+   * @param copyGun the gun object to copy.
+   */
+  public Gun(Gun copyGun) {
+    if (copyGun != null) {
+      this.ammo = copyGun.getAmmo();
     }
+  }
 
-    /**
-     * Constructor with initial ammo value.
-     */
-    public CGun(int _Ammo) {
-        SetAmmo(_Ammo);
+  /**
+   * Validates and sets the amount of ammo.
+   *
+   * @param ammo the amount of ammo to set.
+   */
+  public final void setAmmo(int ammo) {
+    if (ammo < MIN_AMMO) {
+      this.ammo = DEFAULT_AMMO;
+    } else if (ammo > MAX_AMMO) {
+      this.ammo = MAX_AMMO;
+    } else {
+      this.ammo = ammo;
     }
+  }
 
-    /**
-     * Copy constructor.
-     */
-    public CGun(CGun _CopyGun) {
-        if (_CopyGun != null) {
-            this.Ammo = _CopyGun.GetAmmo();
-        }
-    }
+  /**
+   * Returns current ammo count.
+   *
+   * @return current amount of ammo.
+   */
+  public int getAmmo() {
+    return ammo;
+  }
 
-    /**
-     * Returns the current ammo count.
-     */
-    public int GetAmmo() {
-        return Ammo;
+  /**
+   * Performs a shot, reducing ammo by one.
+   */
+  public void shoot() {
+    if (this.ammo > MIN_AMMO) {
+      System.out.println("BANG!");
+      this.ammo--;
+    } else {
+      System.out.println("Click...");
     }
+  }
 
-    /**
-     * Validates and sets the ammo count.
-     */
-    public void SetAmmo(int _Ammo) {
-        if (_Ammo < KEmptyAmmo) {
-            this.Ammo = KDefaultAmmo;
-        } else if (_Ammo > KMaxAmmo) {
-            this.Ammo = KMaxAmmo;
-        } else {
-            this.Ammo = _Ammo;
-        }
-    }
+  /**
+   * Reloads the gun to its maximum capacity.
+   */
+  public void reload() {
+    System.out.println("RELOADING!!!");
+    this.ammo = MAX_AMMO;
+  }
 
-    /**
-     * Performs a shot if ammo is available.
-     */
-    public void Shoot() {
-        if (this.Ammo > KEmptyAmmo) {
-            System.out.println("BANG!");
-            this.Ammo--;
-        } else {
-            System.out.println("Click...");
-        }
-    }
-
-    /**
-     * Reloads the gun to its maximum capacity.
-     */
-    public void Reload() {
-        System.out.println("RELOADING!!!");
-        this.Ammo = KMaxAmmo;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Handgun with %d bullets", Ammo);
-    }
+  @Override
+  public String toString() {
+    return String.format("Gun with %d bullets", ammo);
+  }
 }
