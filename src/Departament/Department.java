@@ -7,10 +7,12 @@ package Departament;
 
 import java.util.ArrayList;
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.), излишнее документирование (12 стр.)
-//       вывод и комментарии должны быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокументируемый код (1 стр.),
-//       магические числа в константы(14 стр.), именование методов (так как возвращает boolean, нужен префикс b, стр. 6).
+// FIXME: Отсутствует Javadoc для класса и публичных методов,
+// отступы составляют 4 пробела вместо 2,
+// отсутствуют фигурные скобки в блоках if,
+// интерфейс toString и комментарии реализованы на русском языке,
+// используется избыточное создание объектов new String(), 
+// нарушены правила пробелов после ключевых слов.
 // public class Department {
 //     private String name;
 //     private Employee boss;
@@ -184,171 +186,180 @@ import java.util.ArrayList;
 // }
 //
 // FIXTO:
-public class CDepartment {
-    // Constants for default values
-    private final String KDefaultName = "Unknown";
-    private final int KStartingNumber = 1;
+/**
+ * Represents a department within an organization, managing a boss and a list of employees.
+ */
+public class Department {
 
-    private String Name; // Name of the department
-    private CEmployee Boss; // The manager (boss) of the department
-    private ArrayList<CEmployee> Employees; // List of all employees in the department
+  private static final String UNKNOWN = "unknown";
 
-    /**
-     * Default constructor.
-     */
-    public CDepartment() {
-        this.Name = KDefaultName;
-        this.Boss = null;
-        this.Employees = new ArrayList<>();
+  private String name;
+  private Employee boss;
+  private List<Employee> employees;
+
+  /**
+   * Constructs a department with default values.
+   */
+  public Department() {
+    this.name = UNKNOWN;
+    this.boss = null;
+    this.employees = new ArrayList<>();
+  }
+
+  /**
+   * Constructs a department with a specified name.
+   *
+   * @param name the name of the department.
+   */
+  public Department(String name) {
+    setName(name);
+    this.boss = null;
+    this.employees = new ArrayList<>();
+  }
+
+  /**
+   * Constructs a department with a name and a boss.
+   *
+   * @param name the name of the department.
+   * @param boss the boss of the department.
+   */
+  public Department(String name, Employee boss) {
+    setName(name);
+    setBoss(boss);
+    this.employees = new ArrayList<>();
+  }
+
+  /**
+   * Constructs a department with full details.
+   *
+   * @param name      the name of the department.
+   * @param boss      the boss of the department.
+   * @param employees the initial list of employees.
+   */
+  public Department(String name, Employee boss, List<Employee> employees) {
+    setName(name);
+    this.employees = new ArrayList<>();
+    if (employees != null) {
+      for (Employee emp : employees) {
+        addEmployee(emp);
+      }
     }
+    setBoss(boss);
+  }
 
-    /**
-     * Constructor with department name.
-     */
-    public CDepartment(String _Name) {
-        this.SetName(_Name);
-        this.Boss = null;
-        this.Employees = new ArrayList<>();
-    }
-
-    /**
-     * Constructor with name and boss.
-     */
-    public CDepartment(String _Name, CEmployee _Boss) {
-        this.SetName(_Name);
-        this.SetBoss(_Boss);
-        this.Employees = new ArrayList<>();
-    }
-
-    /**
-     * Copy constructor.
-     */
-    public CDepartment(CDepartment _Department) {
-        this();
-        if (_Department != null) {
-            this.SetName(_Department.GetName());
-
-            if (_Department.GetBoss() != null) {
-                CEmployee BossCopy = new CEmployee(_Department.Boss.GetName());
-                BossCopy.SetDepartment(this);
-                this.SetBoss(BossCopy);
-            }
-
-            for (CEmployee Emp : _Department.Employees) {
-                if (_Department.Boss == null || Emp != _Department.Boss) {
-                    CEmployee EmpCopy = new CEmployee(Emp.GetName(), this);
-                    this.AddEmployee(EmpCopy);
-                }
-            }
+  /**
+   * Copy constructor for Department.
+   *
+   * @param department the department to copy.
+   */
+  public Department(Department department) {
+    this();
+    if (department != null) {
+      setName(department.getName());
+      if (department.getBoss() != null) {
+        Employee bossCopy = new Employee(department.boss.getName());
+        bossCopy.setDepartment(this);
+        setBoss(bossCopy);
+      }
+      for (Employee emp : department.employees) {
+        if (department.boss == null || emp != department.boss) {
+          addEmployee(new Employee(emp.getName(), this));
         }
+      }
+    }
+  }
+
+  public String getName() {
+    return (name == null) ? UNKNOWN : name;
+  }
+
+  public void setName(String name) {
+    if (name == null || name.isEmpty()) {
+      this.name = UNKNOWN;
+    } else {
+      this.name = name;
+    }
+  }
+
+  public Employee getBoss() {
+    return (boss == null) ? null : new Employee(boss);
+  }
+
+  Employee getRefBoss() {
+    return this.boss;
+  }
+
+  public void setBoss(Employee boss) {
+    this.boss = boss;
+    if (boss != null && !includesEmployee(boss)) {
+      addEmployee(boss);
+    }
+  }
+
+  public List<Employee> getEmployees() {
+    List<Employee> copy = new ArrayList<>();
+    for (Employee emp : employees) {
+      copy.add(new Employee(emp));
+    }
+    return copy;
+  }
+
+  public void setEmployees(List<Employee> employees) {
+    this.employees = employees;
+  }
+
+  public void addEmployee(Employee employee) {
+    if (employee != null && !employees.contains(employee)) {
+      if (employee.getRefDepartment() != null && employee.getRefDepartment() != this) {
+        employee.getRefDepartment().removeEmployee(employee);
+      }
+      employees.add(employee);
+      employee.setDepartment(this);
+    }
+  }
+
+  public void removeEmployee(Employee employee) {
+    if (employee != null && employees.contains(employee)) {
+      employees.remove(employee);
+      if (employee == this.boss) {
+        this.boss = null;
+      }
+      employee.setDepartment(null);
+    }
+  }
+
+  public boolean includesEmployee(Employee employee) {
+    return employees.contains(employee);
+  }
+
+  @Override
+  public String toString() {
+    String depName = (name == null || name.isEmpty()) ? UNKNOWN : name;
+    StringBuilder result = new StringBuilder("Department\n==" + depName + "==\n");
+
+    if (boss != null) {
+      String bossName = (boss.getName() == null || boss.getName().isEmpty()) ? UNKNOWN : boss.getName();
+      result.append("Manager: ").append(bossName).append("\n");
+    } else {
+      result.append("Manager not assigned\n");
     }
 
-    /**
-     * Returns a copy of the department name.
-     */
-    public String GetName() {
-        return (Name == null) ? KDefaultName : new String(Name);
-    }
-
-    /**
-     * Sets the department name with validation.
-     */
-    public void SetName(String _Name) {
-        if (_Name == null || _Name.isEmpty()) {
-            this.Name = KDefaultName;
-        } else {
-            this.Name = _Name;
+    result.append("Employees:\n");
+    if (employees.isEmpty()) {
+      result.append("No employees found\n");
+    } else {
+      int count = 1;
+      for (Employee employee : employees) {
+        if (employee != this.boss) {
+          String empName = (employee.getName() == null) ? UNKNOWN : employee.getName();
+          result.append(count).append(": ").append(empName).append("\n");
+          count++;
         }
+      }
+      if (employees.size() == 1 && boss != null) {
+        result.append("Only manager is present\n");
+      }
     }
-
-    /**
-     * Returns a copy of the boss.
-     */
-    public CEmployee GetBoss() {
-        return (Boss == null) ? null : new CEmployee(Boss);
-    }
-
-    /**
-     * Returns a direct reference to the boss (internal use).
-     */
-    public CEmployee GetRefBoss() {
-        return this.Boss;
-    }
-
-    /**
-     * Sets the department boss and ensures they are in the employee list.
-     */
-    public void SetBoss(CEmployee _Boss) {
-        this.Boss = _Boss;
-        if (_Boss != null && !this.bIncludesEmployee(_Boss)) {
-            this.AddEmployee(_Boss);
-        }
-    }
-
-    /**
-     * Adds an employee to the department and handles previous department removal.
-     */
-    public void AddEmployee(CEmployee _Employee) {
-        if (_Employee != null && !this.Employees.contains(_Employee)) {
-            if (_Employee.GetRefDepartment() != null && _Employee.GetRefDepartment() != this) {
-                _Employee.GetRefDepartment().RemoveEmployee(_Employee);
-            }
-            this.Employees.add(_Employee);
-            _Employee.SetDepartment(this);
-        }
-    }
-
-    /**
-     * Removes an employee and clears their boss status if applicable.
-     */
-    public void RemoveEmployee(CEmployee _Employee) {
-        if (_Employee != null && this.Employees.contains(_Employee)) {
-            this.Employees.remove(_Employee);
-            if (_Employee == this.Boss) {
-                this.Boss = null;
-            }
-            _Employee.SetDepartment(null);
-        }
-    }
-
-    /**
-     * Checks if the employee belongs to this department.
-     */
-    public boolean bIncludesEmployee(CEmployee _Employee) {
-        return this.Employees.contains(_Employee);
-    }
-
-    @Override
-    public String toString() {
-        String DepNameDisplay = (Name == null || Name.isEmpty()) ? KDefaultName : Name;
-        String Result = "Department\n==" + DepNameDisplay + "==\n";
-
-        if (Boss != null) {
-            String BossName = (Boss.GetName() == null || Boss.GetName().isEmpty()) ? KDefaultName : Boss.GetName();
-            Result += "Manager: " + BossName + "\n";
-        } else {
-            Result += "Manager not assigned yet\n";
-        }
-
-        Result += "Employees:\n";
-        if (Employees.isEmpty()) {
-            Result += "No employees found\n";
-        } else {
-            int OrdinalNumber = KStartingNumber;
-
-            for (CEmployee Employee : Employees) {
-                if (Employee != this.Boss) {
-                    String EmpName = (Employee.GetName() == null || Employee.GetName().isEmpty()) ? KDefaultName : Employee.GetName();
-                    Result += String.format("%d: %s\n", OrdinalNumber, EmpName);
-                    OrdinalNumber++;
-                }
-            }
-
-            if (Employees.size() == 1 && this.Boss != null) {
-                Result += "Only manager is present\n";
-            }
-        }
-
-        return Result;
-    }
+    return result.toString();
+  }
 }
