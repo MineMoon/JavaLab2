@@ -6,10 +6,12 @@
 import java.util.Scanner;
 
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.), излишнее документирование (12 стр.)
-//       вывод и комментарии должны быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокументируемый код (1 стр.),
-//       магические числа в константы(14 стр.)
+// FIXME: Отсутствует Javadoc для публичных методов, 
+// отступы составляют 4 пробела вместо 2,
+// отсутствуют пробелы после ключевых слов if,
+// while и catch, интерфейс взаимодействия с пользователем реализован на русском языке,
+// используется неверный термин Diaposon вместо Range, 
+// отсутствуют обязательные фигурные скобки в некоторых блоках if.
 // public class UserInput {
 // 	private final Scanner scanner = new Scanner(System.in);
 // 	private final Check check = new Check();
@@ -136,114 +138,123 @@ import java.util.Scanner;
 // }
 //
 //FIXTO:
-public class CUserInput {
-    private final Scanner InputScanner = new Scanner(System.in); // Source for user input
-    private final CCheck InputChecker = new CCheck(); // Helper for numeric validation
-    private String RawInputBuffer; // Temporary storage for raw string input
+/**
+ * Provides methods for validated user input from the console.
+ */
+public class UserInput {
 
-    /**
-     * Reads a generic integer from the console.
-     */
-    public int InputInt(int _OrdinalNumber) {
-        final int KSingleInput = 0;
+  private final Scanner scanner = new Scanner(System.in);
+  private final Check check = new Check();
 
-        if (_OrdinalNumber == KSingleInput) {
-            System.out.println("Enter a number: ");
-        } else if (_OrdinalNumber > KSingleInput) {
-            System.out.println("Enter number #" + _OrdinalNumber + ": ");
+  /**
+   * Reads an integer with an optional ordinal number prompt.
+   *
+   * @param ordinal the position of the number in a sequence (0 to skip).
+   * @return the entered integer.
+   */
+  public int inputInt(int ordinal) {
+    if (ordinal == 0) {
+      System.out.println("Enter a number: ");
+    } else if (ordinal > 0) {
+      System.out.println("Enter number #" + ordinal + ": ");
+    }
+
+    String input = scanner.nextLine();
+    while (!check.isInteger(input)) {
+      System.out.println("Invalid input! Please enter an integer.");
+      input = scanner.nextLine();
+    }
+    return Integer.parseInt(input);
+  }
+
+  /**
+   * Reads a positive integer (>= 0).
+   *
+   * @param ordinal the position of the number in a sequence.
+   * @return a positive integer.
+   */
+  public int inputPositiveInt(int ordinal) {
+    while (true) {
+      if (ordinal == 0) {
+        System.out.println("Enter a positive integer: ");
+      } else {
+        System.out.println("Enter positive integer #" + ordinal + ": ");
+      }
+
+      String input = scanner.nextLine();
+      try {
+        int value = Integer.parseInt(input);
+        if (value < 0) {
+          System.out.println("The number must be positive!");
+        } else {
+          return value;
         }
+      } catch (NumberFormatException e) {
+        System.out.println("Invalid input! Please enter a valid integer.");
+      }
+    }
+  }
 
-        RawInputBuffer = InputScanner.nextLine();
-        while (!InputChecker.IsInteger(RawInputBuffer)) {
-            System.out.println("Invalid input!");
-            if (_OrdinalNumber == KSingleInput) {
-                System.out.println("Enter a number: ");
-            } else {
-                System.out.println("Enter number #" + _OrdinalNumber + ": ");
-            }
-            RawInputBuffer = InputScanner.nextLine();
+  /**
+   * Reads a string from the console.
+   *
+   * @param context description of what to enter.
+   * @return the entered string.
+   */
+  public String inputString(String context) {
+    System.out.println("Enter " + context + ": ");
+    return scanner.nextLine();
+  }
+
+  /**
+   * Reads an integer within a specific range.
+   *
+   * @param start start of the range (inclusive).
+   * @param end end of the range (inclusive).
+   * @param context description of the value.
+   * @return an integer within the specified range.
+   */
+  public int inputRangeInt(int start, int end, String context) {
+    while (true) {
+      System.out.println("Enter " + context + " (from " + start + " to " + end + "): ");
+      String input = scanner.nextLine();
+
+      if (check.isInteger(input)) {
+        int value = Integer.parseInt(input);
+        if (value >= start && value <= end) {
+          return value;
         }
-        return Integer.parseInt(RawInputBuffer);
+        System.out.println("Value must be between " + start + " and " + end + "!");
+      } else {
+        System.out.println("Invalid input! Please enter a valid number.");
+      }
     }
+  }
 
-    /**
-     * Reads a positive integer from the console.
-     */
-    public int InputPositiveInt(int _OrdinalNumber) {
-        final int KSingleInput = 0;
-        final int KMinimumValue = 0;
+  /**
+   * Reads an integer choice within a range.
+   *
+   * @param start start of choices.
+   * @param end end of choices.
+   * @param context description of the choice.
+   * @return the selected option.
+   */
+  public int inputChoiceInt(int start, int end, String context) {
+    System.out.println("Select " + context + ":");
+    return inputRangeInt(start, end, "choice");
+  }
 
-        while (true) {
-            if (_OrdinalNumber == KSingleInput) {
-                System.out.println("Enter a positive integer: ");
-            } else {
-                System.out.println("Enter positive integer #" + _OrdinalNumber + ": ");
-            }
-
-            RawInputBuffer = InputScanner.nextLine();
-
-            try {
-                int Value = Integer.parseInt(RawInputBuffer);
-                if (Value < KMinimumValue) {
-                    System.out.println("The number must be positive!");
-                } else {
-                    return Value;
-                }
-            } catch (NumberFormatException _Ex) {
-                System.out.println("Invalid input format!");
-            }
-        }
+  /**
+   * Reads an array of integers.
+   *
+   * @param size size of the array.
+   * @return the filled array.
+   */
+  public int[] inputIntArray(int size) {
+    int[] array = new int[size];
+    for (int i = 0; i < size; i++) {
+      array[i] = inputInt(i + 1);
     }
-
-    /**
-     * Reads a string with a specific context prompt.
-     */
-    public String InputString(String _PromptContext) {
-        System.out.println("Enter " + _PromptContext + ": ");
-        RawInputBuffer = InputScanner.nextLine();
-        return RawInputBuffer;
-    }
-
-    /**
-     * Reads an integer within a specific inclusive range.
-     */
-    public int InputRangeInt(int _Start, int _End, String _PromptContext) {
-        System.out.println("Enter " + _PromptContext + " from " + _Start + " to " + _End + ": ");
-        
-        while (true) {
-            RawInputBuffer = InputScanner.nextLine();
-            
-            if (InputChecker.IsInteger(RawInputBuffer)) {
-                int Value = Integer.parseInt(RawInputBuffer);
-                if (Value >= _Start && Value <= _End) {
-                    return Value;
-                }
-                System.out.println("Value out of range (" + _Start + " to " + _End + ")!");
-            } else {
-                System.out.println("Invalid numeric input!");
-            }
-            System.out.println("Try again: ");
-        }
-    }
-
-    /**
-     * Reads an integer choice between a specified range.
-     */
-    public int InputChoiceInt(int _Start, int _End, String _PromptContext) {
-        System.out.println("Select " + _PromptContext);
-        return InputRangeInt(_Start, _End, "choice");
-    }
-
-    /**
-     * Reads an array of integers of a specified size.
-     */
-    public int[] InputIntArray(int _Size) {
-        int[] ResultArray = new int[_Size]; // Array to store inputs
-        
-        for (int i = 0; i < _Size; i++) {
-            // Using i + 1 for user-friendly 1-based indexing in prompts
-            ResultArray[i] = InputInt(i + 1);
-        }
-        return ResultArray;
-    }
+    return array;
+  }
 }
