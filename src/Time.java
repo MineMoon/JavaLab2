@@ -3,10 +3,10 @@
 //FIXTO:
 // @copyright MineMoon. All rights reserved.
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.), излишнее документирование (12 стр.)
-//       вывод и комментарии должны быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокументируемый код (1 стр.),
-//       магические числа в константы(14 стр.)
+/) FIXME: Отсутствует Javadoc для класса и методов, 
+// используются магические числа (86400, 3600, 60), 
+// нарушены правила отступов (2 пробела), 
+// отсутствуют пробелы после ключевых слов if,
 // public class Time {
 //     private int totalSeconds;
 
@@ -45,69 +45,82 @@
 //     }
 
 // }
+// FIXTO:
+/**
+ * Represents a time duration stored in total seconds.
+ */
+public class Time {
 
-public class CTime {
-    // Constants for time calculations
-    private final int KSecondsInDay = 86400;
-    private final int KSecondsInHour = 3600;
-    private final int KSecondsInMinute = 60;
-    private final int KEmptyTime = 0;
+  private static final int SECONDS_IN_DAY = 86400;
+  private static final int SECONDS_IN_HOUR = 3600;
+  private static final int SECONDS_IN_MINUTE = 60;
+  private static final int MIN_SECONDS = 0;
 
-    private int TotalSeconds; // Absolute number of seconds from the start of the day
+  private int totalSeconds;
 
-    /**
-     * Default constructor.
-     */
-    public CTime() {
-        this.TotalSeconds = KEmptyTime;
+  /**
+   * Constructs a time object with zero seconds.
+   */
+  public Time() {
+    this.totalSeconds = MIN_SECONDS;
+  }
+
+  /**
+   * Constructs a time object with a specific number of seconds.
+   *
+   * @param totalSeconds the initial amount of seconds.
+   */
+  public Time(int totalSeconds) {
+    setTotalSeconds(totalSeconds);
+  }
+
+  /**
+   * Copy constructor to create a time object from another time object.
+   *
+   * @param time the time object to copy.
+   */
+  public Time(Time time) {
+    if (time != null) {
+      this.totalSeconds = time.getTotalSeconds();
+    } else {
+      this.totalSeconds = MIN_SECONDS;
     }
+  }
 
-    /**
-     * Constructor with initial seconds value.
-     */
-    public CTime(int _TotalSeconds) {
-        this.SetTotalSeconds(_TotalSeconds);
+  /**
+   * Returns the total seconds.
+   *
+   * @return current total seconds.
+   */
+  public int getTotalSeconds() {
+    return totalSeconds;
+  }
+
+  /**
+   * Validates and sets the total seconds.
+   *
+   * @param totalSeconds the amount of seconds to set.
+   */
+  public final void setTotalSeconds(int totalSeconds) {
+    if (totalSeconds < MIN_SECONDS) {
+      this.totalSeconds = MIN_SECONDS;
+    } else {
+      this.totalSeconds = totalSeconds;
     }
+  }
 
-    /**
-     * Copy constructor.
-     */
-    public CTime(CTime _Time) {
-        if (_Time != null) {
-            this.SetTotalSeconds(_Time.GetTotalSeconds());
-        } else {
-            this.TotalSeconds = KEmptyTime;
-        }
-    }
-
-    /**
-     * Returns the total amount of seconds.
-     */
-    public int GetTotalSeconds() {
-        return TotalSeconds;
-    }
-
-    /**
-     * Sets and validates the total amount of seconds.
-     */
-    public void SetTotalSeconds(int _TotalSeconds) {
-        if (_TotalSeconds < KEmptyTime) {
-            this.TotalSeconds = KEmptyTime;
-        } else {
-            this.TotalSeconds = _TotalSeconds;
-        }
-    }
-
-    /**
-     * Returns the time formatted as H:MM:SS.
-     */
-    @Override
-    public String toString() {
-        // Format: %d - hours, %02d - minutes with leading zero, %02d - seconds with leading zero
-        int Hours = (TotalSeconds % KSecondsInDay) / KSecondsInHour;
-        int Minutes = (TotalSeconds % KSecondsInHour) / KSecondsInMinute;
-        int Seconds = TotalSeconds % KSecondsInMinute;
-
-        return String.format("%d:%02d:%02d", Hours, Minutes, Seconds);
-    }
+  /**
+   * Returns the time formatted as H:MM:SS.
+   *
+   * @return formatted time string.
+   */
+  @Override
+  public String toString() {
+    // Formatting: %d (hours), %02d (minutes with leading zero), %02d (seconds with leading zero)
+    int hours = (totalSeconds % SECONDS_IN_DAY) / SECONDS_IN_HOUR;
+    int minutes = (totalSeconds % SECONDS_IN_HOUR) / SECONDS_IN_MINUTE;
+    int seconds = totalSeconds % SECONDS_IN_MINUTE;
+    
+    return String.format("%d:%02d:%02d", hours, minutes, seconds);
+  }
 }
