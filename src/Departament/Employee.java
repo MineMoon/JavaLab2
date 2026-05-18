@@ -7,10 +7,12 @@ package Departament;
 
 import java.util.Objects;
 
-//FIXME: Префикс C для класса (4-6 стр.), PascalCase (3 стр.), излишнее документирование (12 стр.)
-//       вывод и комментарии должны быть на английском (3 стр.), префикс _ для параметров (6 стр.)
-//       форматирование фигурных скобок(8 стр.), магические числа в константы(14 стр.), самодокументируемый код (1 стр.),
-//       магические строки в константы(14 стр.)
+// FIXME: Отсутствует Javadoc для публичных элементов,
+// используется 4-пробельный отступ вместо 2,
+// избыточное создание объектов new String(),
+// интерфейс toString и комментарии написаны на русском языке,
+// нарушены правила пробелов после ключевых слов и вокруг операторов, 
+// отсутствуют фигурные скобки в блоках управления.
 // public class Employee {
 //     private String name;
 //     private Department department;
@@ -108,120 +110,115 @@ import java.util.Objects;
 // }
 //
 // FIXTO:
-public class CEmployee {
-    // Constants for default string values
-    private final String KUnknownName = "Unknown";
-    private final String KNoDepartment = "No Department";
-    private final String KNoManager = "Not Assigned Yet";
+/**
+ * Represents an employee associated with a department.
+ */
+public class Employee {
 
-    private String Name; // Full name of the employee
-    private CDepartment Department; // Department where the employee works
+  private static final String UNKNOWN = "unknown";
+  private static final String NO_NAME = "no name";
 
-    /**
-     * Default constructor.
-     */
-    public CEmployee() {
-        this.Name = KUnknownName;
-        this.Department = null;
+  private String name;
+  private Department department;
+
+  /**
+   * Default constructor initializing employee with unknown name.
+   */
+  public Employee() {
+    this.name = UNKNOWN;
+    this.department = null;
+  }
+
+  /**
+   * Constructs an employee with a specified name.
+   *
+   * @param name the name of the employee.
+   */
+  public Employee(String name) {
+    setName(name);
+    this.department = null;
+  }
+
+  /**
+   * Constructs an employee with a name and a department.
+   *
+   * @param name       the name of the employee.
+   * @param department the department the employee belongs to.
+   */
+  public Employee(String name, Department department) {
+    setName(name);
+    if (department != null) {
+      department.addEmployee(this);
+    }
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param copyEmployee the employee object to copy.
+   */
+  public Employee(Employee copyEmployee) {
+    if (copyEmployee != null) {
+      setName(copyEmployee.getName());
+      setDepartment(copyEmployee.getRefDepartment());
+    } else {
+      this.name = UNKNOWN;
+      this.department = null;
+    }
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    if (name == null || name.isEmpty()) {
+      this.name = UNKNOWN;
+    } else {
+      this.name = name;
+    }
+  }
+
+  public Department getDepartment() {
+    return (this.department == null) ? null : new Department(department);
+  }
+
+  Department getRefDepartment() {
+    return this.department;
+  }
+
+  /**
+   * Sets the department reference. Visible within the department package.
+   */
+  void setDepartment(Department department) {
+    this.department = department;
+  }
+
+  @Override
+  public String toString() {
+    if (this.department == null) {
+      return String.format("%s does not belong to any department", getName());
     }
 
-    /**
-     * Constructor with name only.
-     */
-    public CEmployee(String _Name) {
-        this.SetName(_Name);
-        this.Department = null;
+    String depName = NO_NAME;
+    if (department.getName() != null && !department.getName().isEmpty()
+        && !Objects.equals(department.getName(), UNKNOWN)) {
+      depName = department.getName();
     }
 
-    /**
-     * Constructor with name and department association.
-     */
-    public CEmployee(String _Name, CDepartment _Department) {
-        this.SetName(_Name);
-        if (_Department != null) {
-            _Department.AddEmployee(this);
-        }
+    if (department.getRefBoss() == this) {
+      return String.format("%s is the manager of the %s department", getName(), depName);
     }
 
-    /**
-     * Copy constructor.
-     */
-    public CEmployee(CEmployee _CopyEmployee) {
-        if (_CopyEmployee != null) {
-            this.SetName(_CopyEmployee.GetName());
-            this.SetDepartment(_CopyEmployee.GetRefDepartment());
-        } else {
-            this.Name = KUnknownName;
-            this.Department = null;
-        }
+    String bossName = "not assigned yet";
+    if (department.getBoss() != null) {
+      Employee boss = department.getRefBoss();
+      if (boss.getName() != null && !boss.getName().isEmpty()) {
+        bossName = boss.getName();
+      }
     }
 
-    /**
-     * Returns the name of the employee.
-     */
-    public String GetName() {
-        return (Name == null) ? KUnknownName : Name;
-    }
-
-    /**
-     * Sets the employee name with validation.
-     */
-    public void SetName(String _Name) {
-        if (_Name == null || _Name.isEmpty()) {
-            this.Name = KUnknownName;
-        } else {
-            this.Name = _Name;
-        }
-    }
-
-    /**
-     * Returns a copy of the department (using copy constructor).
-     */
-    public CDepartment GetDepartment() {
-        return (this.Department == null) ? null : new CDepartment(this.Department);
-    }
-
-    /**
-     * Internal: Returns a direct reference to the department.
-     */
-    public CDepartment GetRefDepartment() {
-        return this.Department;
-    }
-
-    /**
-     * Internal: Sets the department reference.
-     */
-    void SetDepartment(CDepartment _Department) {
-        this.Department = _Department;
-    }
-
-    @Override
-    public String toString() {
-        if (this.Department == null) {
-            return String.format("%s does not belong to any department", this.GetName());
-        }
-
-        String DepName = KNoDepartment; // Display name for the department
-        if (this.Department.GetName() != null && !this.Department.GetName().isEmpty()) {
-            if (!this.Department.GetName().equalsIgnoreCase(KUnknownName)) {
-                DepName = this.Department.GetName();
-            }
-        }
-
-        // Logic if the employee is the manager of the department
-        if (this.Department.GetRefBoss() == this) {
-            return String.format("%s is the manager of the %s department", this.GetName(), DepName);
-        }
-
-        String ManagerName = KNoManager; // Display name for the manager
-        if (this.Department.GetBoss() != null) {
-            CEmployee Boss = this.Department.GetRefBoss();
-            if (Boss.GetName() != null && !Boss.GetName().isEmpty()) {
-                ManagerName = Boss.GetName();
-            }
-        }
-
-        return String.format("%s works in the %s department, which is managed by %s",
-                this.GetName(), DepName, ManagerName);
-    }
+    return String.format("%s works in the %s department, managed by %s",
+        getName(), depName, bossName);
+  }
 }
